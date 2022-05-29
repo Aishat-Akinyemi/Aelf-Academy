@@ -1,0 +1,250 @@
+
+syntax = "proto3";
+import "aelf/core.proto";
+import "aelf/options.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "AElf.Contracts.AelfAcademy";
+service AelfAcademyContract {
+    option (aelf.csharp_state) = "AElf.Contracts.AelfAcademy.AelfAcademyContractState";
+
+    //Action
+    rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
+    rpc AddCourse (AddCourseInput) returns (google.protobuf.Empty) { }
+    rpc AddAdmin (AddUserInput) returns (google.protobuf.Empty) { }
+    rpc AddChiefModerator (AddUserInput) returns (google.protobuf.Empty) { }
+    rpc AddLearner (google.protobuf.StringValue) returns (google.protobuf.Empty) { }
+    rpc SubmitChallenge (SubmitChallengeInput) returns (google.protobuf.Empty) { }
+    rpc ModerateChallenge (ModerateChallengeInput) returns (google.protobuf.Empty) { }
+    
+    //View
+    rpc GetAcademyInfo (google.protobuf.Empty) returns (AcademyInfo) {
+        option (aelf.is_view) = true;
+    }
+    rpc GetUserInfo (google.protobuf.Int64Value) returns (UserInfo)  {
+        option (aelf.is_view) = true;
+    }    
+    
+    rpc GetHighestLevel (google.protobuf.Empty) returns (google.protobuf.Int64Value)  {
+        option (aelf.is_view) = true;
+    }
+    rpc GetCourse (google.protobuf.Int64Value) returns (Course)  {
+        option (aelf.is_view) = true;
+    }
+    rpc GetCourses (google.protobuf.Empty) returns (Courses)  {
+        option (aelf.is_view) = true;
+    }
+    rpc GetOwner (google.protobuf.Empty) returns (aelf.Address)  {
+        option (aelf.is_view) = true;
+    } 
+    
+    rpc GetCourseSubmission (google.protobuf.Int64Value) returns (CourseSubmissions)  {
+        option (aelf.is_view) = true;
+    }
+    rpc GetOutstandingCourseSubmission (google.protobuf.Int64Value) returns (CourseSubmissions)  {
+        option (aelf.is_view) = true;
+    }
+
+    rpc GetLearnerSubmission (google.protobuf.Int64Value) returns (LearnerSubmissons)  {
+        option (aelf.is_view) = true;
+    }    
+
+    rpc GetModeratorsModerations (google.protobuf.Int64Value) returns (CourseSubmissions)  {
+        option (aelf.is_view) = true;
+    }
+
+
+    //rpc methodName (Input) returns (google.protobuf.Empty) { }
+    rpc AddAdminList (userList) returns (google.protobuf.Empty) { }
+    rpc GetAdminList (google.protobuf.Empty) returns (userList) {}
+
+}
+
+
+//messages
+message InitializeInput {
+     AddUserInput admin = 1;  
+     AddUserInput moderator = 2;   
+}
+
+message AddUserInput {
+    aelf.Address user_address = 1; 
+    string username = 2;
+}
+
+message SubmitChallengeInput {
+    int64 course_id = 1;
+    string submission_url = 2;
+}
+
+message ModerateChallengeInput {
+    int64 course_id = 1;
+    aelf.Address learner_id = 2;
+}
+
+message AddCourseInput {
+    string title = 1;
+    int64 submission_reward = 2;
+    int64 moderation_reward = 3;
+    int64 level = 4;
+    string contenturl = 5;
+}
+
+message AcademyInfo {
+    aelf.Address owner= 1;
+    int64 fund = 2;
+    repeated User admins = 3;
+    repeated User chief_moderators = 4;
+}
+/*
+message AcademyInfo {
+    aelf.Address owner= 1;
+    int64 fund = 2;
+    map<string, User> admins = 3;
+    map<string, User> chief_moderators = 4;
+}*/
+
+/*message userList{
+    map<string, User> user_map = 1;
+}*/
+
+message userList{
+    repeated User users = 1;
+}
+
+
+message StringList {
+    repeated string value = 1;
+}
+message UserInfo {
+    string username = 1;
+    RoleType role = 2;
+    int64 level = 3;
+    int64 reward = 4;
+}
+
+message User {
+    string username = 1;
+    aelf.Address address = 2;
+    int64 level = 3;
+    int64 reward = 4;
+}
+
+
+message Course {
+    int64 course_id = 1;
+    string title = 2;
+    int64 submission_reward = 3;
+    int64 moderation_reward = 4;
+    int64 level = 5;
+    string contenturl = 6;
+}
+
+
+message Courses {
+    repeated Course course_list = 1;
+}
+
+
+message CourseSubmission {
+    aelf.Address learner_id = 1;
+    int64 course_id = 2;    
+    string submission_url = 3;
+    aelf.Address moderated_by = 4;
+}
+
+message CourseSubmissions {
+    int64 course_id = 1;
+    repeated CourseSubmission submissions = 2;
+}
+
+message LearnerSubmisson {
+    int64 course_id = 1;    
+    string submission_url = 2;
+    bool is_moderated = 3;
+}
+
+message LearnerSubmissons {
+    repeated LearnerSubmisson submissions = 1;
+}
+
+
+//internal message to be used in state
+message course_ {
+    string title = 1;
+    int64 submission_reward = 2;
+    int64 moderation_reward = 3;
+    int64 level = 4;
+    string contenturl = 5;
+}
+
+message  submission_ { 
+    string submission_url = 1;
+    aelf.Address moderated_by = 2;
+}
+
+//events
+message AcademyInitializedEvent {
+    option (aelf.is_event) = true;
+    aelf.Address owner = 1;
+}
+
+message CourseAddedEvent {
+    option (aelf.is_event) = true;
+    string title = 1;
+    int64 course_id = 2;
+    int64 submission_reward = 3;
+    int64 moderation_reward = 4;
+    int64 level = 5;
+    aelf.Address added_by = 6;    
+}
+
+message AdminAddedEvent {
+    option (aelf.is_event) = true;
+    aelf.Address added_by = 2;
+    aelf.Address admin_address = 3;
+}
+
+message LearnerJoinedEvent {
+    option (aelf.is_event) = true;    
+    aelf.Address learner_address = 1;
+}
+
+message ChiefModeratorAddedEvent {
+    option (aelf.is_event) = true;
+    aelf.Address added_by = 1;
+    aelf.Address moderator_address = 2;
+}
+
+message SubmitChallengeEvent {
+    option (aelf.is_event) = true;
+    aelf.Address submitted_by = 1;    
+    int64 course_id = 2;
+    string submission_url = 3;
+}
+
+message ModerateChallengeEvent {
+    option (aelf.is_event) = true;    
+    int64 courseId = 1;
+    string submission_url = 2;
+    aelf.Address moderated_by = 3; 
+    aelf.Address submitted_by = 4;
+}
+
+enum RoleType {
+    ADMIN = 0;
+    LEARNER = 1;
+    CHIEFMODERATOR = 2;
+}
+
+
+/**message Event {
+    option (aelf.is_event) = true;
+}
+
+message Event {
+    option (aelf.is_event) = true;
+}**/
+
+
