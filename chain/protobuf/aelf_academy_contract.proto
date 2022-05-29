@@ -12,8 +12,8 @@ service AelfAcademyContract {
     //Action
     rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
     rpc AddCourse (AddCourseInput) returns (google.protobuf.Empty) { }
-    rpc AddAdmin (AddUserInput) returns (google.protobuf.Empty) { }
-    rpc AddChiefModerator (AddUserInput) returns (google.protobuf.Empty) { }
+    rpc AddAdminList (UserInputList) returns (google.protobuf.Empty) { }
+    rpc AddChiefModerator (UserInputList) returns (google.protobuf.Empty) { }
     rpc AddLearner (google.protobuf.StringValue) returns (google.protobuf.Empty) { }
     rpc SubmitChallenge (SubmitChallengeInput) returns (google.protobuf.Empty) { }
     rpc ModerateChallenge (ModerateChallengeInput) returns (google.protobuf.Empty) { }
@@ -56,20 +56,20 @@ service AelfAcademyContract {
 
 
     //rpc methodName (Input) returns (google.protobuf.Empty) { }
-    rpc AddAdminList (userList) returns (google.protobuf.Empty) { }
-    rpc GetAdminList (google.protobuf.Empty) returns (userList) {}
+   
+    rpc GetAdminList (google.protobuf.Empty) returns (UserOutputList) {}
 
 }
 
 
 //messages
 message InitializeInput {
-     AddUserInput admin = 1;  
-     AddUserInput moderator = 2;   
+     UserInputList admin = 1;  
+     UserInputList moderator = 2;   
 }
 
 message AddUserInput {
-    aelf.Address user_address = 1; 
+    aelf.Address address = 1; 
     string username = 2;
 }
 
@@ -97,26 +97,19 @@ message AcademyInfo {
     repeated User admins = 3;
     repeated User chief_moderators = 4;
 }
-/*
-message AcademyInfo {
-    aelf.Address owner= 1;
-    int64 fund = 2;
-    map<string, User> admins = 3;
-    map<string, User> chief_moderators = 4;
-}*/
 
-/*message userList{
-    map<string, User> user_map = 1;
-}*/
+message UserInputList {
+    repeated AddUserInput users = 1;
+}
 
-message userList{
+message UserOutputList {
     repeated User users = 1;
 }
 
-
-message StringList {
-    repeated string value = 1;
+message AddressList {
+    repeated aelf.Address value = 1;
 }
+
 message UserInfo {
     string username = 1;
     RoleType role = 2;

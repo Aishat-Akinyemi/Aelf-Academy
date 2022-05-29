@@ -21,13 +21,13 @@ namespace AElf.Contracts.AelfAcademy
         {
             //assert that it hasn't been initialized before
             Assert(State.Owner.Value == null, "Already initialized.");
-            Assert(input.Admin != null && input.Moderator != null, "you must initialize the academy with at least one ChiefModerator and one Admin");
+            //Assert(input.Admin != null && input.Moderator != null, "you must initialize the academy with at least one ChiefModerator and one Admin");
             //set owner as caller account
             State.Owner.Value = Context.Sender;
             //add admin 
-            this.AddAdmin(input.Admin);
+           
             //add moderator
-            this.AddChiefModerator(input.Moderator);
+           
 
             return new Empty();
         }
@@ -39,10 +39,10 @@ namespace AElf.Contracts.AelfAcademy
 
         //public override Empty AddAdmin(AddUserInput input)
         //{
-        //    var userId = CalculateFeatureValue(input.UserAddress);
+        //    var userId = CalculateFeatureValue(input.Address);
         //    //the value for RoleType.Admin is 0
         //    Assert(State.AdminMap[userId] == null, $"{userId} is already added as an Admin");
-        //    State.AdminMap[userId] = input.UserAddress;
+        //    State.AdminMap[userId] = input.Address;
         //    User thisUser = new User();
         //    thisUser.Username = input.Username;
         //    thisUser.Reward = 0;
@@ -50,58 +50,29 @@ namespace AElf.Contracts.AelfAcademy
         //    Context.Fire(new AdminAddedEvent
         //    {
         //        AddedBy = Context.Sender,
-        //        AdminAddress = input.UserAddress
+        //        AdminAddress = input.Address
         //    });
         //    return new Empty();
         //}
 
-        public override Empty AddAdmin(AddUserInput input)
-        {
-            var userId = CalculateFeatureValue(input.UserAddress);
-            //the value for RoleType.Admin is 0
-            //check if it has been added
-            Assert(State.AdminMap[userId] == null, $"{userId} is already added as an Admin");
-            //add to the list
-            //if(State.AdminUserList.Value == null)
-            //{
-            //    State.AdminUserList.Value = new userList();
-            //}
-
-            //State.AdminUserList.Value.MergeFrom(new userList());
-            //State.AdminUserList.Value.UserMap.AsEnumerable();
-            //State.AdminUserList.Value.UserMap.Keys();
-
-            //add to the map
-
-            User thisUser = new User();
-            thisUser.Username = input.Username;
-            thisUser.Reward = 0;
-            State.UserMap[RoleType.Admin][userId] = thisUser;
-            Context.Fire(new AdminAddedEvent
-            {
-                AddedBy = Context.Sender,
-                AdminAddress = input.UserAddress
-            });
-            return new Empty();
-        }
-
-        public override Empty AddChiefModerator(AddUserInput input)
-        {
-            var userId = CalculateFeatureValue(input.UserAddress);
-            //the value for RoleType.CHIEFMODERATOR is 2
-            Assert(State.UserMap[RoleType.Chiefmoderator][userId] == null, $"{input.UserAddress} is already added as a Chief Moderator");
-            State.ChiefModeratorMap[userId] = input.UserAddress;
-            User thisUser = new User();
-            thisUser.Username = input.Username;
-            thisUser.Reward = 0;
-            State.UserMap[RoleType.Chiefmoderator][userId] = thisUser;
-            Context.Fire(new ChiefModeratorAddedEvent
-            {
-                AddedBy = Context.Sender,
-                ModeratorAddress = input.UserAddress
-            });
-            return new Empty();
-        }
+    
+        //public override Empty AddChiefModerator(AddUserInput input)
+        //{
+        //    var userId = CalculateFeatureValue(input.Address);
+        //    //the value for RoleType.CHIEFMODERATOR is 2
+        //    Assert(State.UserMap[RoleType.Chiefmoderator][userId] == null, $"{input.Address} is already added as a Chief Moderator");
+        //    State.ChiefModeratorMap[userId] = input.Address;
+        //    User thisUser = new User();
+        //    thisUser.Username = input.Username;
+        //    thisUser.Reward = 0;
+        //    State.UserMap[RoleType.Chiefmoderator][userId] = thisUser;
+        //    Context.Fire(new ChiefModeratorAddedEvent
+        //    {
+        //        AddedBy = Context.Sender,
+        //        ModeratorAddress = input.Address
+        //    });
+        //    return new Empty();
+        //}
 
         public override Empty AddLearner(StringValue input)
         {
@@ -177,37 +148,44 @@ namespace AElf.Contracts.AelfAcademy
             return base.GetModeratorsModerations(input);
         }
 
-        public override Empty AddAdminList(userList input)
+        public override Empty AddAdminList(UserInputList input)
         {
-
+            
             //TODO assert sender is Admin or Owner
-            //foreach (var map in userList)
+            //foreach (var map in UserInputList)
             //{
             //    var userId = CalculateFeatureValue(map.Key);
             //}           
-            foreach (var user in input.Users)
-            {
-                var userId = CalculateFeatureValue(user.Address);
+            foreach (var userInput in input.Users)
+            {                
+                
+                //Assert(State.AdminMap[userId] == null, $"{userId} is already added as an Admin");
+                //create user variable
+                var user = new User {
+                    Username = userInput.Username,
+                    Address = userInput.Address,
+                    Reward = 0
+                };
                 //add to the main map
-                State.AdminMap[userId] = user;
+                State.AdminMap[userInput.Address] = user;
 
                 //add to singleton list
                 if (State.AdminUserList.Value == null)
                 {
-                    State.AdminUserList.Value = new StringList { Value = { userId } };
+                    State.AdminUserList.Value = new AddressList { Value = { userInput.Address } };
                 }
                 else
                 {
-                    State.AdminUserList.Value.Value.Add(userId);
+                    State.AdminUserList.Value.Value.Add(userInput.Address);
                 }
                 
             }
             return new Empty();
         }
 
-        public override userList GetAdminList(Empty input)
+        public override UserOutputList GetAdminList(Empty input)
         {
-            var adminList = new userList();
+            var adminList = new UserOutputList();
             
             foreach ( var userId in State.AdminUserList.Value.Value)
             {                

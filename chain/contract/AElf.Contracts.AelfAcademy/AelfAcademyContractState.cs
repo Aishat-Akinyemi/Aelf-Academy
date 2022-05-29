@@ -32,8 +32,8 @@ namespace AElf.Contracts.AelfAcademy
         //TODO implement courseModerationMap and benchmark with getting moderations from above
 
 
-        public MappedState<string, User> AdminMap { get; set; }
-        public SingletonState<StringList> AdminUserList { get; set; }
+        public MappedState<Address, User> AdminMap { get; set; }
+        public SingletonState<AddressList> AdminUserList { get; set; }
 
 
     }
