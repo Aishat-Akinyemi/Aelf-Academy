@@ -34,6 +34,9 @@
     <ContractStub Include="..\..\protobuf\aelf_academy_contract.proto">
       <Link>Protobuf\Proto\aelf_academy_contract.proto</Link>
     </ContractStub>
+	<ContractStub Include="..\..\protobuf\token_contract.proto">
+      <Link>Protobuf\Proto\token_contract.proto</Link>
+    </ContractStub>  
   </ItemGroup>
 
   <ItemGroup>

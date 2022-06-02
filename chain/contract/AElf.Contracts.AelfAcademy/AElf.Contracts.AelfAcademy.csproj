@@ -18,4 +18,10 @@
             <Link>Protobuf\Proto\aelf_academy_contract.proto</Link>
         </ContractCode>
     </ItemGroup>
+	<ItemGroup>
+		<!-- Reference the protobuf definition of the contract -->
+		<ContractReference Include="..\..\protobuf\token_contract.proto">
+			<Link>Protobuf\Proto\token_contract.proto</Link>
+		</ContractReference>
+	</ItemGroup>
 </Project>
