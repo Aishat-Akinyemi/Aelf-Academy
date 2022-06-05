@@ -12,8 +12,8 @@ service AelfAcademyContract {
     //Action
     rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
     rpc AddCourse (CourseInput) returns (google.protobuf.Empty) { }
-    rpc AddAdminList (UserInputList) returns (google.protobuf.Empty) { }
-    rpc AddChiefModerator (UserInputList) returns (google.protobuf.Empty) { }
+    rpc AddAdminList (AddUserInput) returns (google.protobuf.Empty) { }
+    rpc AddChiefModerator (AddUserInput) returns (google.protobuf.Empty) { }
     rpc AddLearner (google.protobuf.StringValue) returns (google.protobuf.Empty) { }
     rpc SubmitChallenge (SubmitChallengeInput) returns (google.protobuf.Empty) { }
     rpc ModerateChallenge (ModerateChallengeInput) returns (google.protobuf.Empty) { }
@@ -56,16 +56,13 @@ service AelfAcademyContract {
 
 //messages
 message InitializeInput {
-     UserInputList admins = 1;  
-     UserInputList chief_moderators = 2;   
+     AddUserInput admin = 1;  
+     AddUserInput chief_moderator = 2;   
 }
 
 message AddUserInput {
     aelf.Address address = 1; 
     string username = 2;
-}
-message UserInputList {
-    repeated AddUserInput users = 1;
 }
 
 message AcademyInfo {

@@ -21,21 +21,21 @@ namespace AElf.Contracts.AelfAcademy
         {
             //assert that it hasn't been initialized before
             Assert(State.Owner.Value == null, "ALREADY INITIALIZED CONTRACT." );
-            Assert(input.Admins != null && input.ChiefModerators != null, "you must initialize the academy with at least one ChiefModerator and one Admin");
+            Assert(input.Admin != null && input.ChiefModerator != null, "you must initialize the academy with at least one ChiefModerator and one Admin");
             //set owner as caller account
             State.Owner.Value = Context.Sender;
             State.CourseId.Value = 1;
             State.HighestLevel.Value = 1;
             //add admin 
-            AddUserList(input.Admins, RoleType.Admin);
+            AddUserList(input.Admin, RoleType.Admin);
             //add moderator
-            AddUserList(input.ChiefModerators, RoleType.Chiefmoderator);
+            AddUserList(input.ChiefModerator, RoleType.Chiefmoderator);
             State.TokenContract.Value =
             Context.GetContractAddressByName(SmartContractConstants.TokenContractSystemName);
             return new Empty();
         }
 
-        public override Empty AddChiefModerator(UserInputList input)
+        public override Empty AddChiefModerator(AddUserInput input)
         {
             AssertSenderIsOwnerOrAdmin();
             AddUserList(input, RoleType.Chiefmoderator);
@@ -44,32 +44,29 @@ namespace AElf.Contracts.AelfAcademy
 
         public override Empty AddLearner(StringValue input)
         {
-            var user = new UserInputList();
-            user.Users.Add(new AddUserInput { Username = input.Value, Address = Context.Sender});
+            var user = new AddUserInput{ Username = input.Value, Address = Context.Sender};
             AddUserList(user, RoleType.Learner);
             return new Empty();
         }
-        public override Empty AddAdminList(UserInputList input)    {
+        public override Empty AddAdminList(AddUserInput input)    {
            AssertSenderIsOwnerOrAdmin();
            return AddUserList(input, RoleType.Admin);
         }
 
-        private Empty AddUserList(UserInputList input, RoleType role)
+        private Empty AddUserList(AddUserInput input, RoleType role)
         {
-            foreach (var userInput in input.Users)
-            {
-                var usersList = State.UserMap[role][userInput.Address];
+                var usersList = State.UserMap[role][input.Address];
                 //confirm that user hasn't been added to the role already
-                Assert(State.UserMap[role][userInput.Address] == null, $"{userInput.Address} is already added");
+                Assert(State.UserMap[role][input.Address] == null, $"{input.Address} is already added");
                 //create user variable
                 var user = new User
                 {
-                    Username = userInput.Username,
-                    Address = userInput.Address,
+                    Username = input.Username,
+                    Address = input.Address,
                     Reward = 0
                 };
                 //add to usermap based on role
-                State.UserMap[role][userInput.Address] = user;
+                State.UserMap[role][input.Address] = user;
                 //add to the corresponding  singleton list list (i.e. one of AdminList, ChiefModeratorList and LearnerList)               
                 switch (role)
                 {
@@ -77,11 +74,11 @@ namespace AElf.Contracts.AelfAcademy
                         {                            
                             if (State.AdminUserList.Value == null)
                             {
-                                State.AdminUserList.Value = new AddressList { Addresses = { userInput.Address } };
+                                State.AdminUserList.Value = new AddressList { Addresses = { input.Address } };
                             }
                             else
                             {
-                                State.AdminUserList.Value.Addresses.Add(userInput.Address);
+                                State.AdminUserList.Value.Addresses.Add(input.Address);
                             }
                             break;
                         }
@@ -89,11 +86,11 @@ namespace AElf.Contracts.AelfAcademy
                         {
                             if (State.ChiefModeratorList.Value == null)
                             {
-                                State.ChiefModeratorList.Value = new AddressList { Addresses = { userInput.Address } };
+                                State.ChiefModeratorList.Value = new AddressList { Addresses = { input.Address } };
                             }
                             else
                             {
-                                State.ChiefModeratorList.Value.Addresses.Add(userInput.Address);
+                                State.ChiefModeratorList.Value.Addresses.Add(input.Address);
                             }
                             break;
                         }
@@ -102,17 +99,17 @@ namespace AElf.Contracts.AelfAcademy
                             //add to singleton list
                             if (State.LearnerList.Value == null)
                             {
-                                State.LearnerList.Value = new AddressList { Addresses = { userInput.Address } };
+                                State.LearnerList.Value = new AddressList { Addresses = { input.Address } };
                             }
                             else
                             {
-                                State.LearnerList.Value.Addresses.Add(userInput.Address);
+                                State.LearnerList.Value.Addresses.Add(input.Address);
                             }
                             break;
                         }
                     default: break;
                 }
-            } 
+            
             return new Empty();
         }
 

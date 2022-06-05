@@ -24,216 +24,198 @@ namespace AElf.Contracts.AelfAcademy
 {
     public class AelfAcademyContractTests : AelfAcademyContractTestBase
     {
-        //[Fact]
-        //public async Task Initialize()
-        //{
-        //    // Get a stub for testing.
-        //    var keyPair = SampleAccount.Accounts.First().KeyPair;
-        //    var stub = GetAelfAcademyContractStub(keyPair);
+        [Fact]
+        public async Task Initialize()
+        {
+            // Get a stub for testing.
+            var keyPair = SampleAccount.Accounts.First().KeyPair;
+            var stub = GetAelfAcademyContractStub(keyPair);
 
-        //    // initializing with no admins and chief_moderators should fail
-        //    await stub.Initialize.SendWithExceptionAsync(new InitializeInput { });
+            // initializing with no admins and chief_moderators should fail
+            await stub.Initialize.SendWithExceptionAsync(new InitializeInput { });
 
-        //    //initialize with admin and moderator lists
-        //    var admins = new UserInputList();
-        //    admins.Users.Add(new AddUserInput { Username = "admin1", Address = SampleAccount.Accounts.Skip(1).First().Address });
-        //    admins.Users.Add(new AddUserInput { Username = "admin2", Address = SampleAccount.Accounts.Skip(2).First().Address });
-        //    var chief_moderator = new UserInputList();
-        //    chief_moderator.Users.Add(new AddUserInput { Username = "mod1", Address = SampleAccount.Accounts.Skip(3).First().Address });
-        //    await stub.Initialize.SendAsync(new InitializeInput { Admins = admins, ChiefModerators = chief_moderator });
-        //    var academyInfo = await stub.GetAcademyInfo.CallAsync(new Empty());
-        //    academyInfo.Admins.Users.Count.ShouldBe(2, "admin should be 2");
-        //    academyInfo.ChiefModerators.Users.Count.ShouldBe(1, "chief moderator should be 1");
+            //initialize with admin and moderator lists
+            var admin = new AddUserInput { Username = "admin1", Address = SampleAccount.Accounts.Skip(1).First().Address };
+            var chief_moderator = new AddUserInput { Username = "mod1", Address = SampleAccount.Accounts.Skip(3).First().Address };
+            await stub.Initialize.SendAsync(new InitializeInput { Admin = admin, ChiefModerator = chief_moderator });
+            var academyInfo = await stub.GetAcademyInfo.CallAsync(new Empty());
+            academyInfo.Admins.Users.Count.ShouldBe(1, "admin should be 1");
+            academyInfo.ChiefModerators.Users.Count.ShouldBe(1, "chief moderator should be 1");
 
-        //}
+        }
 
-        //[Fact]
-        //public async Task Fund()
-        //{
-        //    // Get a stub for testing.
-        //    var keyPair = SampleAccount.Accounts.First().KeyPair;
-        //    var stub = GetAelfAcademyContractStub(keyPair);
-        //    //var keyPair1 = SampleAccount.Accounts.Skip(1).First().KeyPair;
-        //    //var stub1 = GetAelfAcademyContractStub(keyPair1);
-        //    //initialize with admin and moderator lists
-        //    var admins = new UserInputList();
-        //    admins.Users.Add(new AddUserInput { Username = "admin1", Address = SampleAccount.Accounts.Skip(1).First().Address });
-        //    var chief_moderator = new UserInputList();
-        //    chief_moderator.Users.Add(new AddUserInput { Username = "mod1", Address = SampleAccount.Accounts.Skip(3).First().Address });
-        //    await stub.Initialize.SendAsync(new InitializeInput { Admins = admins, ChiefModerators = chief_moderator });
-        //    var initialBalance = (await stub.GetAcademyInfo.CallAsync(new Empty())).Balance;
-        //    //fund 
-        //    const long amount = 100_00000000;
-        //    var tokenStub = GetTokenContractStub(keyPair);
-        //    await tokenStub.Approve.SendAsync(new ApproveInput
-        //    {
-        //        Spender = DAppContractAddress,
-        //        Symbol = "ELF",
-        //        Amount = long.MaxValue
-        //    });
+        [Fact]
+        public async Task Fund()
+        {
+            // Get a stub for testing.
+            var keyPair = SampleAccount.Accounts.First().KeyPair;
+            var stub = GetAelfAcademyContractStub(keyPair);
+            //var keyPair1 = SampleAccount.Accounts.Skip(1).First().KeyPair;
+            //var stub1 = GetAelfAcademyContractStub(keyPair1);
+            //initialize with admin and moderator lists
+            var admin = new AddUserInput { Username = "admin1", Address = SampleAccount.Accounts.Skip(1).First().Address };
+            var chief_moderator = new AddUserInput { Username = "mod1", Address = SampleAccount.Accounts.Skip(3).First().Address };
+            await stub.Initialize.SendAsync(new InitializeInput { Admin = admin, ChiefModerator = chief_moderator });
+            var initialBalance = (await stub.GetAcademyInfo.CallAsync(new Empty())).Balance;
+            //fund 
+            const long amount = 100_00000000;
+            var tokenStub = GetTokenContractStub(keyPair);
+            await tokenStub.Approve.SendAsync(new ApproveInput
+            {
+                Spender = DAppContractAddress,
+                Symbol = "ELF",
+                Amount = long.MaxValue
+            });
 
-        //    await stub.FundAcademy.SendAsync(new Int64Value { Value = amount});
-        //    var balanceAfterFunding = (await stub.GetAcademyInfo.CallAsync(new Empty())).Balance;
-        //    balanceAfterFunding.ShouldBe(initialBalance + amount);
-        //}
-        //[Fact]
-        //public async Task Admin()
-        //{
-        //    // Get a stub for testing.
-        //    var keyPair = SampleAccount.Accounts.First().KeyPair;
-        //    var stub = GetAelfAcademyContractStub(keyPair);
+            await stub.FundAcademy.SendAsync(new Int64Value { Value = amount });
+            var balanceAfterFunding = (await stub.GetAcademyInfo.CallAsync(new Empty())).Balance;
+            balanceAfterFunding.ShouldBe(initialBalance + amount);
+        }
+        [Fact]
+        public async Task Admin()
+        {
+            // Get a stub for testing.
+            var keyPair = SampleAccount.Accounts.First().KeyPair;
+            var stub = GetAelfAcademyContractStub(keyPair);
 
-        //    var admins = new UserInputList();
-        //    admins.Users.Add(new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(1).First().Address });
-        //    admins.Users.Add(new AddUserInput { Username = "ambidun", Address = SampleAccount.Accounts.Skip(2).First().Address });
-        //    var chief_moderator = new UserInputList();
-        //    chief_moderator.Users.Add(new AddUserInput { Username = "anike", Address = SampleAccount.Accounts.Skip(3).First().Address });
-        //    //initialize
-        //    await stub.Initialize.SendAsync(new InitializeInput { Admins = admins, ChiefModerators = chief_moderator });
-        //    var initialAcademyInfo = await stub.GetAcademyInfo.CallAsync(new Empty());
-        //    initialAcademyInfo.Admins.Users.Count.ShouldBe(2, "admin should be 2");
+            var admin = new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(1).First().Address };
+            var chief_moderator = new  AddUserInput { Username = "anike", Address = SampleAccount.Accounts.Skip(3).First().Address };
+            //initialize
+            await stub.Initialize.SendAsync(new InitializeInput { Admin = admin, ChiefModerator = chief_moderator });
+            var initialAcademyInfo = await stub.GetAcademyInfo.CallAsync(new Empty());
+            initialAcademyInfo.Admins.Users.Count.ShouldBe(1, "admin should be 1");
 
-        //    var admin1 = new UserInputList();
-        //    admin1.Users.Add(new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(4).First().Address });
-        //    await stub.AddAdminList.SendAsync(admin1);
+            var admin1 = new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(4).First().Address };
+            await stub.AddAdminList.SendAsync(admin1);
 
-        //    var academyInfo = await stub.GetAcademyInfo.CallAsync(new Empty());
-        //    academyInfo.Admins.Users.Count.ShouldBe(3, "admin should be 3");
+            var academyInfo = await stub.GetAcademyInfo.CallAsync(new Empty());
+            academyInfo.Admins.Users.Count.ShouldBe(2, "admin should be 2");
 
-        //    //adding the same admin should return an exception
-        //    await stub.AddAdminList.SendWithExceptionAsync(admins);
+            //adding the same admin should return an exception
+            await stub.AddAdminList.SendWithExceptionAsync(admin);
 
-        //    //adding an admin with a non-admin account should fail
-        //    var keypair1 = SampleAccount.Accounts.Skip(3).First().KeyPair;
-        //    var stub1 = GetAelfAcademyContractStub(keypair1);
-        //    var admin2 = new UserInputList();
-        //    admin2.Users.Add(new AddUserInput { Username = "seun", Address = SampleAccount.Accounts.Skip(5).First().Address });
-        //    await stub1.AddAdminList.SendWithExceptionAsync(admin2);
+            //adding an admin with a non-admin account should fail
+            var keypair1 = SampleAccount.Accounts.Skip(3).First().KeyPair;
+            var stub1 = GetAelfAcademyContractStub(keypair1);
+            var admin2 = new AddUserInput { Username = "seun", Address = SampleAccount.Accounts.Skip(5).First().Address };
+            await stub1.AddAdminList.SendWithExceptionAsync(admin2);
 
-        //}
+        }
 
-        //[Fact]
-        //public async Task ChiefModerator()
-        //{
-        //    // Get a stub for testing.
-        //    var keyPair = SampleAccount.Accounts.First().KeyPair;
-        //    var stub = GetAelfAcademyContractStub(keyPair);
+        [Fact]
+        public async Task ChiefModerator()
+        {
+            // Get a stub for testing.
+            var keyPair = SampleAccount.Accounts.First().KeyPair;
+            var stub = GetAelfAcademyContractStub(keyPair);
 
-        //    var admins = new UserInputList();
-        //    admins.Users.Add(new AddUserInput { Username = "firstUser", Address = SampleAccount.Accounts.Skip(1).First().Address });
-        //    var chief_moderator = new UserInputList();
-        //    chief_moderator.Users.Add(new AddUserInput { Username = "secondUser", Address = SampleAccount.Accounts.Skip(2).First().Address });
-        //    //initialize
-        //    await stub.Initialize.SendAsync(new InitializeInput
-        //    {
-        //        Admins = admins,
-        //        ChiefModerators = chief_moderator
-        //    });
+            var admin = new AddUserInput { Username = "firstUser", Address = SampleAccount.Accounts.Skip(1).First().Address };
+            var chief_moderator = new  AddUserInput { Username = "secondUser", Address = SampleAccount.Accounts.Skip(2).First().Address };
+            //initialize
+            await stub.Initialize.SendAsync(new InitializeInput
+            {
+                Admin = admin,
+                ChiefModerator = chief_moderator
+            });
 
-        //    var initialAcademyInfo = await stub.GetAcademyInfo.CallAsync(new Empty());
-        //    initialAcademyInfo.ChiefModerators.Users.Count.ShouldBe(1, "moderator should be 1");
+            var initialAcademyInfo = await stub.GetAcademyInfo.CallAsync(new Empty());
+            initialAcademyInfo.ChiefModerators.Users.Count.ShouldBe(1, "moderator should be 1");
 
-        //    var chiefModerators = new UserInputList();
-        //    chiefModerators.Users.Add(new AddUserInput { Username = "thirdUser", Address = SampleAccount.Accounts.Skip(3).First().Address });
-        //    await stub.AddChiefModerator.SendAsync(chiefModerators);
-        //    var academyInfo = await stub.GetAcademyInfo.CallAsync(new Empty());
-        //    academyInfo.ChiefModerators.Users.Count.ShouldBe(2, "moderator should be 2");
+            var chiefModerators = new AddUserInput { Username = "thirdUser", Address = SampleAccount.Accounts.Skip(3).First().Address };
+            await stub.AddChiefModerator.SendAsync(chiefModerators);
+            var academyInfo = await stub.GetAcademyInfo.CallAsync(new Empty());
+            academyInfo.ChiefModerators.Users.Count.ShouldBe(2, "moderator should be 2");
 
-        //    //adding the same chiefModerator should return an exception
-        //    await stub.AddChiefModerator.SendWithExceptionAsync(chiefModerators);
+            //adding the same chiefModerator should return an exception
+            await stub.AddChiefModerator.SendWithExceptionAsync(chiefModerators);
 
-        //    //adding a chiefmoderator with a non-admin account should fail
-        //    var keypair1 = SampleAccount.Accounts.Skip(4).First().KeyPair;
-        //    var stub1 = GetAelfAcademyContractStub(keypair1);
-        //    var chiefModerator1 = new UserInputList();
-        //    chiefModerator1.Users.Add(new AddUserInput { Username = "fourthUser", Address = SampleAccount.Accounts.Skip(4).First().Address });
-        //    await stub1.AddAdminList.SendWithExceptionAsync(chiefModerator1);
+            //adding a chiefmoderator with a non-admin account should fail
+            var keypair1 = SampleAccount.Accounts.Skip(4).First().KeyPair;
+            var stub1 = GetAelfAcademyContractStub(keypair1);
+            var chiefModerator1 = new AddUserInput { Username = "fourthUser", Address = SampleAccount.Accounts.Skip(4).First().Address };
+            await stub1.AddAdminList.SendWithExceptionAsync(chiefModerator1);
 
-        //}
+        }
 
-        //[Fact]
-        //public async Task Learner()
-        //{   // Get a stub for testing.
-        //    var keyPair = SampleAccount.Accounts.First().KeyPair;
-        //    var stub = GetAelfAcademyContractStub(keyPair);
-        //    var admins = new UserInputList();
-        //    admins.Users.Add(new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(1).First().Address });
-        //    var chief_moderator = new UserInputList();
-        //    chief_moderator.Users.Add(new AddUserInput { Username = "anike", Address = SampleAccount.Accounts.Skip(2).First().Address });
-        //    //initialize
-        //    await stub.Initialize.SendAsync(new InitializeInput {Admins = admins, ChiefModerators = chief_moderator});
-        //    var initial_learners = await stub.GetLearners.CallAsync(new Empty());
-        //    initial_learners.Users.Count.ShouldBe(0);
+        [Fact]
+        public async Task Learner()
+        {   // Get a stub for testing.
+            var keyPair = SampleAccount.Accounts.First().KeyPair;
+            var stub = GetAelfAcademyContractStub(keyPair);
+            var admin = new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(1).First().Address };
+            var chief_moderator = new AddUserInput { Username = "anike", Address = SampleAccount.Accounts.Skip(2).First().Address };
+            //initialize
+            await stub.Initialize.SendAsync(new InitializeInput { Admin = admin, ChiefModerator = chief_moderator });
+            var initial_learners = await stub.GetLearners.CallAsync(new Empty());
+            initial_learners.Users.Count.ShouldBe(0);
 
-        //    var keyPair2 = SampleAccount.Accounts.Skip(1).First().KeyPair;
-        //    var stub2 = GetAelfAcademyContractStub(keyPair2);
-        //    StringValue username = new StringValue{ Value = "tara"};
-        //    await stub2.AddLearner.SendAsync(username);
-        //    var learners = await stub.GetLearners.CallAsync(new Empty());
-        //    learners.Users.Count.ShouldBe(1);
+            var keyPair2 = SampleAccount.Accounts.Skip(1).First().KeyPair;
+            var stub2 = GetAelfAcademyContractStub(keyPair2);
+            StringValue username = new StringValue { Value = "tara" };
+            await stub2.AddLearner.SendAsync(username);
+            var learners = await stub.GetLearners.CallAsync(new Empty());
+            learners.Users.Count.ShouldBe(1);
 
-        //    //cannot add a learner more than once
-        //    await stub2.AddLearner.SendWithExceptionAsync(username);
-        //}
+            //cannot add a learner more than once
+            await stub2.AddLearner.SendWithExceptionAsync(username);
+        }
 
-        //[Fact]
-        //public async Task Courses()
-        //{
-        //    var keyPair = SampleAccount.Accounts.First().KeyPair;
-        //    var keyPair2 = SampleAccount.Accounts.Skip(1).First().KeyPair;
-        //    var stub = GetAelfAcademyContractStub(keyPair);
-        //    var adminStub = GetAelfAcademyContractStub(keyPair2);
+        [Fact]
+        public async Task Courses()
+        {
+            var keyPair = SampleAccount.Accounts.First().KeyPair;
+            var keyPair2 = SampleAccount.Accounts.Skip(1).First().KeyPair;
+            var stub = GetAelfAcademyContractStub(keyPair);
+            var adminStub = GetAelfAcademyContractStub(keyPair2);
 
-        //    var admins = new UserInputList();
-        //    admins.Users.Add(new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(1).First().Address });
-        //    var chief_moderator = new UserInputList();
-        //    chief_moderator.Users.Add(new AddUserInput { Username = "anike", Address = SampleAccount.Accounts.Skip(2).First().Address });
-        //    //initialize
-        //    await stub.Initialize.SendAsync(new InitializeInput { Admins = admins, ChiefModerators = chief_moderator });
+            var admin = new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(1).First().Address };
+            var chief_moderator = new AddUserInput { Username = "anike", Address = SampleAccount.Accounts.Skip(2).First().Address };
+            //initialize
+            await stub.Initialize.SendAsync(new InitializeInput { Admin = admin, ChiefModerator = chief_moderator });
 
-        //    //the no of courses before we add courses should be 0
-        //    var initialcourse = await stub.GetCourses.CallAsync(new Empty());
-        //    initialcourse.CourseList.Count.ShouldBe(0);
+            //the no of courses before we add courses should be 0
+            var initialcourse = await stub.GetCourses.CallAsync(new Empty());
+            initialcourse.CourseList.Count.ShouldBe(0);
 
-        //    var course = new CourseInput
-        //    {
-        //        ContentUrl = "https://...",
-        //        Level = 1,
-        //        ModerationReward = 12,
-        //        SubmissionReward = 100
-        //    };
+            var course = new CourseInput
+            {
+                ContentUrl = "https://...",
+                Level = 1,
+                ModerationReward = 12,
+                SubmissionReward = 100
+            };
 
-        //    //add course with admin account
-        //    await stub.AddCourse.SendAsync(course);
-        //    var courses = await adminStub.GetCourses.CallAsync(new Empty());
-        //    courses.CourseList.Count.ShouldBe(1);
+            //add course with admin account
+            await stub.AddCourse.SendAsync(course);
+            var courses = await adminStub.GetCourses.CallAsync(new Empty());
+            courses.CourseList.Count.ShouldBe(1);
 
-        //    //get course should return the course
-        //    var _course = await adminStub.GetCourse.CallAsync(new Int64Value { Value = 1 });
-        //    _course.CourseId.ShouldBe(1);
-        //    _course.Contenturl.ShouldContain("htt");
+            //get course should return the course
+            var _course = await adminStub.GetCourse.CallAsync(new Int64Value { Value = 1 });
+            _course.CourseId.ShouldBe(1);
+            _course.Contenturl.ShouldContain("htt");
 
-        //    //add courses with admin account
-        //    var course2 = new CourseInput
-        //    {
-        //        ContentUrl = "https://...",
-        //        Level = 2,
-        //        ModerationReward = 10,
-        //        SubmissionReward = 100
-        //    };
-        //    await adminStub.AddCourse.SendAsync(course2);
-        //    var course3 = new CourseInput
-        //    {
-        //        ContentUrl = "https://...",
-        //        Level = 3,
-        //        ModerationReward = 10,
-        //        SubmissionReward = 100
-        //    };
-        //    await adminStub.AddCourse.SendAsync(course3);
-        //    var highestLevel = await stub.GetHighestLevel.CallAsync(new Empty());
-        //    highestLevel.Value.ShouldBe(3);
+            //add courses with admin account
+            var course2 = new CourseInput
+            {
+                ContentUrl = "https://...",
+                Level = 2,
+                ModerationReward = 10,
+                SubmissionReward = 100
+            };
+            await adminStub.AddCourse.SendAsync(course2);
+            var course3 = new CourseInput
+            {
+                ContentUrl = "https://...",
+                Level = 3,
+                ModerationReward = 10,
+                SubmissionReward = 100
+            };
+            await adminStub.AddCourse.SendAsync(course3);
+            var highestLevel = await stub.GetHighestLevel.CallAsync(new Empty());
+            highestLevel.Value.ShouldBe(3);
 
-        //}
+        }
 
         [Fact]
         public async Task SubmissionAndModeration()
@@ -257,12 +239,10 @@ namespace AElf.Contracts.AelfAcademy
             var learner2Address = SampleAccount.Accounts.Skip(4).First().Address;
             var learner2stub = GetAelfAcademyContractStub(keyPairLearner2);
 
-            var admins = new UserInputList();
-            admins.Users.Add(new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(1).First().Address });
-            var chief_moderator = new UserInputList();
-            chief_moderator.Users.Add(new AddUserInput { Username = "anike", Address = SampleAccount.Accounts.Skip(2).First().Address });
+            var admins = new  AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(1).First().Address };
+            var chief_moderator = new AddUserInput { Username = "anike", Address = SampleAccount.Accounts.Skip(2).First().Address };
             //initialize
-            await ownerStub.Initialize.SendAsync(new InitializeInput { Admins = admins, ChiefModerators = chief_moderator });
+            await ownerStub.Initialize.SendAsync(new InitializeInput { Admin = admins, ChiefModerator = chief_moderator });
 
 
             //add learner account
