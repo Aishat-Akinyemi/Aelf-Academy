@@ -5,6 +5,8 @@ using AElf.CSharp.Core;
 using AElf.Types;
 using AElf.Contracts.MultiToken;
 using Google.Protobuf.WellKnownTypes;
+using AElf.Sdk.CSharp;
+
 namespace AElf.Contracts.AelfAcademy
 {
     public partial class AelfAcademyContract
@@ -32,6 +34,13 @@ namespace AElf.Contracts.AelfAcademy
 
                 //add submission to the SubmissionMap
                 submissonList.List.Add(submission);
+
+                Context.Fire(new SubmitChallengeEvent
+                {
+                    SubmittedBy = Context.Sender,
+                    CourseId = input.CourseId,
+                    SubmissionUrl = input.SubmissionUrl
+                });
                 return new Empty();
             }
             else  {
@@ -55,6 +64,12 @@ namespace AElf.Contracts.AelfAcademy
                 var _submissionList = new SubmissionList();
                 _submissionList.List.Add(submission);
                 State.SubmissionMap[input.CourseId][Context.Sender] = _submissionList;
+                Context.Fire(new SubmitChallengeEvent
+                {
+                    SubmittedBy = Context.Sender,
+                    CourseId = input.CourseId,
+                    SubmissionUrl = input.SubmissionUrl
+                });
                 return new Empty();
             }
            
@@ -88,6 +103,13 @@ namespace AElf.Contracts.AelfAcademy
                 });
             }
             //TODO if the student had submitted before, then remove 1 / 3 of their reward.
+
+            Context.Fire(new ModerateChallengeEvent
+            {
+                CourseId = input.CourseId,
+                ModeratedBy = Context.Sender,
+                SubmittedBy = input.LearnerId
+            });
             return new Empty();
         }
 

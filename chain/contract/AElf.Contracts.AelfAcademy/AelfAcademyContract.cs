@@ -32,6 +32,11 @@ namespace AElf.Contracts.AelfAcademy
             AddUserList(input.ChiefModerator, RoleType.Chiefmoderator);
             State.TokenContract.Value =
             Context.GetContractAddressByName(SmartContractConstants.TokenContractSystemName);
+
+            Context.Fire(new AcademyInitializedEvent
+            {
+                Owner = Context.Sender
+            });
             return new Empty();
         }
 
@@ -39,6 +44,12 @@ namespace AElf.Contracts.AelfAcademy
         {
             AssertSenderIsOwnerOrAdmin();
             AddUserList(input, RoleType.Chiefmoderator);
+
+            Context.Fire(new ChiefModeratorAddedEvent
+            {
+                ModeratorAddress = input.Address, 
+                AddedBy = Context.Sender
+            });
             return new Empty();
         }
 
@@ -46,11 +57,23 @@ namespace AElf.Contracts.AelfAcademy
         {
             var user = new AddUserInput{ Username = input.Value, Address = Context.Sender};
             AddUserList(user, RoleType.Learner);
+
+            Context.Fire(new LearnerJoinedEvent
+            {
+                LearnerAddress = Context.Sender
+            });
             return new Empty();
         }
-        public override Empty AddAdminList(AddUserInput input)    {
+        public override Empty AddAdmin(AddUserInput input)    {
            AssertSenderIsOwnerOrAdmin();
-           return AddUserList(input, RoleType.Admin);
+            AddUserList(input, RoleType.Admin);
+
+            Context.Fire(new AdminAddedEvent
+            {
+                AdminAddress = input.Address,
+                AddedBy = Context.Sender
+            });
+            return new Empty();
         }
 
         private Empty AddUserList(AddUserInput input, RoleType role)
@@ -133,6 +156,12 @@ namespace AElf.Contracts.AelfAcademy
                 To = Context.Self,
                 Amount = input.Value,
                 Symbol = Context.Variables.NativeSymbol
+            });
+
+            Context.Fire(new FundAcademyEvent
+            {
+                Amount = input.Value,
+                FundedBy = Context.Sender
             });
             return new Empty();
         }

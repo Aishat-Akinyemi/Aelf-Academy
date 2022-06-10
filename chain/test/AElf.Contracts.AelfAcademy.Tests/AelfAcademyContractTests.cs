@@ -86,19 +86,19 @@ namespace AElf.Contracts.AelfAcademy
             initialAcademyInfo.Admins.Users.Count.ShouldBe(1, "admin should be 1");
 
             var admin1 = new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(4).First().Address };
-            await stub.AddAdminList.SendAsync(admin1);
+            await stub.AddAdmin.SendAsync(admin1);
 
             var academyInfo = await stub.GetAcademyInfo.CallAsync(new Empty());
             academyInfo.Admins.Users.Count.ShouldBe(2, "admin should be 2");
 
             //adding the same admin should return an exception
-            await stub.AddAdminList.SendWithExceptionAsync(admin);
+            await stub.AddAdmin.SendWithExceptionAsync(admin);
 
             //adding an admin with a non-admin account should fail
             var keypair1 = SampleAccount.Accounts.Skip(3).First().KeyPair;
             var stub1 = GetAelfAcademyContractStub(keypair1);
             var admin2 = new AddUserInput { Username = "seun", Address = SampleAccount.Accounts.Skip(5).First().Address };
-            await stub1.AddAdminList.SendWithExceptionAsync(admin2);
+            await stub1.AddAdmin.SendWithExceptionAsync(admin2);
 
         }
 
@@ -133,7 +133,7 @@ namespace AElf.Contracts.AelfAcademy
             var keypair1 = SampleAccount.Accounts.Skip(4).First().KeyPair;
             var stub1 = GetAelfAcademyContractStub(keypair1);
             var chiefModerator1 = new AddUserInput { Username = "fourthUser", Address = SampleAccount.Accounts.Skip(4).First().Address };
-            await stub1.AddAdminList.SendWithExceptionAsync(chiefModerator1);
+            await stub1.AddAdmin.SendWithExceptionAsync(chiefModerator1);
 
         }
 

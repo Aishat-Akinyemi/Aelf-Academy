@@ -12,7 +12,7 @@ service AelfAcademyContract {
     //Action
     rpc Initialize (InitializeInput) returns (google.protobuf.Empty) { }
     rpc AddCourse (CourseInput) returns (google.protobuf.Empty) { }
-    rpc AddAdminList (AddUserInput) returns (google.protobuf.Empty) { }
+    rpc AddAdmin (AddUserInput) returns (google.protobuf.Empty) { }
     rpc AddChiefModerator (AddUserInput) returns (google.protobuf.Empty) { }
     rpc AddLearner (google.protobuf.StringValue) returns (google.protobuf.Empty) { }
     rpc SubmitChallenge (SubmitChallengeInput) returns (google.protobuf.Empty) { }
@@ -212,9 +212,14 @@ message SubmitChallengeEvent {
 message ModerateChallengeEvent {
     option (aelf.is_event) = true;    
     int64 courseId = 1;
-    string submission_url = 2;
-    aelf.Address moderated_by = 3; 
-    aelf.Address submitted_by = 4;
+    aelf.Address moderated_by = 2; 
+    aelf.Address submitted_by = 3;
+}
+
+message FundAcademyEvent {
+    option (aelf.is_event) = true;  
+    int64 amount = 1;
+    aelf.Address funded_by = 2;
 }
 
 enum RoleType {

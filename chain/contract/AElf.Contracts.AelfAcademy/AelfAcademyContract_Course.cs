@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AElf.CSharp.Core;
+using AElf.Sdk.CSharp;
 using AElf.Types;
 using Google.Protobuf.WellKnownTypes;
 namespace AElf.Contracts.AelfAcademy
@@ -27,6 +28,15 @@ namespace AElf.Contracts.AelfAcademy
             {
                 State.HighestLevel.Value = input.Level;
             }
+
+            Context.Fire(new CourseAddedEvent
+            {
+                CourseId = currentCourseId,
+                ModerationReward = input.ModerationReward,
+                SubmissionReward =  input.SubmissionReward,
+                Level = input.Level,
+                AddedBy= Context.Sender
+            });
             return new Empty();
         }
 
