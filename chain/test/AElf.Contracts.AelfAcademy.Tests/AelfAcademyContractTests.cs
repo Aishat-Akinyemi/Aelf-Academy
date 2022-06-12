@@ -182,7 +182,8 @@ namespace AElf.Contracts.AelfAcademy
                 ContentUrl = "https://...",
                 Level = 1,
                 ModerationReward = 12,
-                SubmissionReward = 100
+                SubmissionReward = 100,
+                CourseTitle = "Get started with aelf"
             };
 
             //add course with admin account
@@ -201,7 +202,8 @@ namespace AElf.Contracts.AelfAcademy
                 ContentUrl = "https://...",
                 Level = 2,
                 ModerationReward = 10,
-                SubmissionReward = 100
+                SubmissionReward = 100,
+                CourseTitle = "AElf 201"
             };
             await adminStub.AddCourse.SendAsync(course2);
             var course3 = new CourseInput
@@ -209,7 +211,8 @@ namespace AElf.Contracts.AelfAcademy
                 ContentUrl = "https://...",
                 Level = 3,
                 ModerationReward = 10,
-                SubmissionReward = 100
+                SubmissionReward = 100,
+                CourseTitle = "AELF 300"
             };
             await adminStub.AddCourse.SendAsync(course3);
             var highestLevel = await stub.GetHighestLevel.CallAsync(new Empty());
@@ -272,7 +275,8 @@ namespace AElf.Contracts.AelfAcademy
                 ContentUrl = "https://...",
                 Level = 1,
                 ModerationReward = 10_00000000,
-                SubmissionReward = 50_00000000
+                SubmissionReward = 50_00000000,
+                CourseTitle = "Get started with aelf"
             };
             await ownerStub.AddCourse.SendAsync(course1);
             //submitting a challenge with a non-existent courseId should fail
@@ -312,7 +316,8 @@ namespace AElf.Contracts.AelfAcademy
                 ContentUrl = "https://...",
                 Level = 2,
                 ModerationReward = 20_00000000,
-                SubmissionReward = 80_00000000
+                SubmissionReward = 80_00000000,
+                CourseTitle = "AELF 201"
             };
             await adminStub.AddCourse.SendAsync(course2);
             var course3 = new CourseInput
@@ -320,7 +325,8 @@ namespace AElf.Contracts.AelfAcademy
                 ContentUrl = "https://...",
                 Level = 3,
                 ModerationReward = 50_00000000,
-                SubmissionReward = 100_00000000
+                SubmissionReward = 100_00000000,
+                CourseTitle = "AELF 301"
             };
             await adminStub.AddCourse.SendAsync(course3);
             //learner 2 submits challenge for course 3

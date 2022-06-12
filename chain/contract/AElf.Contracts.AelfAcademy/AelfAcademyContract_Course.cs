@@ -19,7 +19,8 @@ namespace AElf.Contracts.AelfAcademy
                 ModerationReward = input.ModerationReward,
                 Level = input.Level,
                 ContentUrl = input.ContentUrl,
-                IsActive = true
+                IsActive = true,
+                CourseTitle = input.CourseTitle
             };
             State.CourseMap[currentCourseId] = course;
             State.CourseId.Value = currentCourseId.Add(1);
@@ -35,7 +36,8 @@ namespace AElf.Contracts.AelfAcademy
                 ModerationReward = input.ModerationReward,
                 SubmissionReward =  input.SubmissionReward,
                 Level = input.Level,
-                AddedBy= Context.Sender
+                AddedBy= Context.Sender,
+                CourseTitle = input.CourseTitle
             });
             return new Empty();
         }
@@ -50,7 +52,8 @@ namespace AElf.Contracts.AelfAcademy
                 ModerationReward = c.ModerationReward,
                 Level = c.Level,
                 Contenturl = c.ContentUrl,
-                IsActive = c.IsActive
+                IsActive = c.IsActive,
+                CourseTitle = c.CourseTitle
             };
         }
 

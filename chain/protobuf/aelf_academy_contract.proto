@@ -103,6 +103,7 @@ message CourseOutput {
     int64 level = 4;
     string contenturl = 5;
     bool is_active = 6;
+    string course_title = 7;
 }
 
 message CoursesOutput {
@@ -151,6 +152,7 @@ message CourseInput {
     int64 moderation_reward = 2;
     int64 level = 3;
     string content_url = 4;
+    string course_title = 5;
 }
 
 message Course {
@@ -159,6 +161,7 @@ message Course {
     int64 level = 3;
     string content_url = 4;
     bool is_active = 5;
+    string course_title = 6;
 }
 
 message FundingMap {
@@ -182,7 +185,8 @@ message CourseAddedEvent {
     int64 submission_reward = 2;
     int64 moderation_reward = 3;
     int64 level = 4;
-    aelf.Address added_by = 5;    
+    aelf.Address added_by = 5; 
+    string course_title = 6;
 }
 
 message AdminAddedEvent {
