@@ -14,19 +14,14 @@ The quests are moderated/evaluated by advanced learners. Learners earn from Ques
 
 ### Features
 
-The dApp contains **self-paced courses** that teach development on **Aelf blockchain** in various levels, beginner, intermediate and advanced.
+The dApp contains **self-paced courses** that teach development on Aelf blockchain in various levels, beginner, intermediate and advanced.
 
-Each **course** has a fun **Quest** so that learners can build practical projects from what they learned in the course.
+- Each course has a fun **Quest** so that learners can build practical projects from what they learned in the course.
+- Learners can join Aelf Academy and enrol in courses and complete the quests.
+- A submitted quest is **evaluated** by Advanced level Aelf-Academy learners, and **moderators**. Moderators are experienced Aelf-developers. Moderation involves reviewing a quest and giving feedback and guidance to the developer in solving issues they may face.
+- A moderator can approve a quest submission, or reject the submission. The learner can submit another solution if the previous one was rejected.
+- **Evaluation (aka moderation)** is rewarded with Elf tokens, and learners are rewarded for successful quest completion.
 
-Learners can join Aelf Academy and enrol in courses and complete the quests.
-
-A submitted quest is **evaluated/moderated** by Advanced level Aelf-Academy learners, and moderators. Moderators are experienced Aelf-developers. Moderation involves reviewing a quest and giving feedback and guidance to the developer in solving issues they may face.
-
-A **moderator** can approve a quest submission, or reject the submission. The learner can submit another solution if the previous one was rejected.
-
-**Evaluation** (aka moderation) is rewarded with Elf tokens, and learners are rewarded for successful quest completion.
-
-An  **approved quest** moves the learner to the next level. A learner keeps advancing to the next level and subsequently becomes a moderator.
 
 ## Project Structure
 
