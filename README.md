@@ -1,8 +1,9 @@
 
 # Aelf Academy dApp
 
-
 Welcome to AElf Academy's official GitHub repo! This repository contains the contract code and the web application code for the dApp. 
+
+![cover image](https://github.com/Aishat-Akinyemi/Aelf-Academy/blob/aelf-academy-main/web/aelf-academy-fe/public/aaLogo.png)
 
 ## About Aelf Academy dApp
 
