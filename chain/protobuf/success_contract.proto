@@ -1,0 +1,25 @@
+syntax = "proto3";
+import "aelf/core.proto";
+import "aelf/options.proto";
+
+import "google/protobuf/empty.proto";
+
+
+option csharp_namespace = "AElf.Contracts.Success";
+
+service SuccessContract {
+
+    
+    option (aelf.csharp_state) = "AElf.Contracts.Success.SuccessContractState";
+
+    
+    rpc Set (InputMessage) returns (google.protobuf.Empty) { }
+    rpc Get(google.protobuf.Empty) returns (InputMessage) {
+        option (aelf.is_view) = true;
+    }
+}
+
+
+message InputMessage {
+    string value = 1;
+}

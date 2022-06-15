@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "aelf/core.proto";
+import "aelf/options.proto";
+
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "AElf.Contracts.QuadraticFunding";
+
+// the contract definition: a gRPC service definition.
+service QuadraticFundingContract {
+
+    option (aelf.csharp_state) = "AElf.Contracts.QuadraticFunding.QuadraticFundingContractState";
+
+    // an action defined as a gRPC service method.
+    // this action take a google.protobuf.Empty (placeholder for void) as input
+    // and returns a custom defined type: HelloReturn.
+    rpc Hello (google.protobuf.Empty) returns (HelloReturn) { }
+}
+
+// a custom message, used as the return type of the Hello action
+message HelloReturn {
+    string Value = 1;
+}
