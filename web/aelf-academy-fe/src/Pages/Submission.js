@@ -1,12 +1,11 @@
 import React, {useState} from 'react'
 import { Button, Stack,  Form, Card, ListGroup, Accordion, ToastContainer, Toast} from 'react-bootstrap';
 
-const Submission = ({/**courseId, learnerAdd, role*/}) => {
+const Submission = ({user /**courseId, learnerAdd, user.role*/}) => {
     const [courseTitle, setCourseTitle] = useState("Aelf 101: Getting Started with AElf");
     const [submissionReward, setSubmissionsReward] = useState(50);
     const [moderationReward, setmoderationReward] = useState(20);
     const [courseId, setCourseId] = useState(1);
-    const [role, setRole] = useState("Learner");
     const [submissionList, setSubmissionList] = useState(learnerSubmissionList.find(s => s.courseId === courseId).submissions);
     const [userSubmissions, setUserSubmissions] = useState(userSubmissionList);
     const [currentSubmissionInput, setCurrentSubmissionInput] = useState('');
@@ -16,7 +15,7 @@ const Submission = ({/**courseId, learnerAdd, role*/}) => {
   return (
     <div className='contain mm position-relative'>
             <header>
-                <h2>{role === 'Learner' && `Your`} Submissions to Quest: {courseTitle}</h2>
+                <h2>{user.role === 'Learner' && `Your`} Submissions to Quest: {courseTitle}</h2>
                 <Stack direction="horizontal" gap={4} className="my-4">
                   <div className="bg-light border p-1 sm-txt">Submission Reward: <span className='reward'>{submissionReward} ELF</span></div>
                   <div className="bg-light border p-1 sm-txt">Moderation Reward: <span className="reward">{moderationReward} ELF</span></div>
@@ -24,7 +23,7 @@ const Submission = ({/**courseId, learnerAdd, role*/}) => {
             </header>
             <div className=''>
                 {
-                    role === 'Learner' 
+                    user.role === 'Learner' 
                     ?
                     <>                    
                         {
@@ -83,7 +82,7 @@ const Submission = ({/**courseId, learnerAdd, role*/}) => {
                     :<>
                        { <Card>
                                 <Card.Header>
-                                    { `${role === 'Chief Moderator'? 'Review': ''} Quest Submissions`} 
+                                    { `${user.role === 'Chief Moderator'? 'Review': ''} Quest Submissions`} 
                                 </Card.Header>
                                 <Card.Body>
                                     {/* //userSubmissions? */}
@@ -103,7 +102,7 @@ const Submission = ({/**courseId, learnerAdd, role*/}) => {
                                                                                                                                                            
                                                                                 {
                                                                                     x === user.submissions.length-1 &&
-                                                                                        role === 'Chief Moderator' && 
+                                                                                        user.role === 'Chief Moderator' && 
                                                                                         <>
                                                                                             <Button variant="outline-danger" className='me-3'
                                                                                                 onClick={()=> setShowModerationSuccess(!showModerationSuccess)} 
@@ -136,7 +135,7 @@ const Submission = ({/**courseId, learnerAdd, role*/}) => {
             <ToastContainer className="p-3" position='middle-center'>
                 <Toast show={showSubmissionSuccess} onClose={() => setShowSubmissionSuccess(!showSubmissionSuccess)}>
                     <Toast.Header>                    
-                    <strong className="me-auto">Congrats on submitting your solution 🚀🚀</strong>
+                    <strong className="me-auto"> Congrats on submitting your solution 🚀🚀 </strong>
                     </Toast.Header>
                     <Toast.Body>Successfully submitted solution to quest: {courseTitle}</Toast.Body>
                 </Toast>
@@ -155,7 +154,6 @@ const Submission = ({/**courseId, learnerAdd, role*/}) => {
 
 export default Submission
 
-const role = ["Learner", "Chief Moderator", "Admin"]
 
 const learnerSubmissionList= [
     {
@@ -184,7 +182,7 @@ const learnerSubmissionList= [
             {
                 submissionUrl: 'https://github.com/bradtraversy/react-crash-2021',
                 moderatedBy: '2qrgUV4BxGUfUYxpikxVGKFHxgv38qq2o2b3vJrD2Bj29LHqQnxdgsjks45738339v',
-                isApproved : true
+                isApproved : false
             }            
         ]
         
@@ -218,7 +216,7 @@ const userSubmissionList = [
             {
                 submissionUrl: 'https://github.com/bradtraversy/react-crash-2021',
                 moderatedBy: '2qrgUV4BxGUfUYxpikxVGKFHxgv38qq2o2b3vJrD2Bj29LHqQnxdgsjks45738339v',
-                isApproved : true
+                isApproved : false
             }            
         ]
         

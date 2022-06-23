@@ -1,5 +1,6 @@
 const DEFAULT_PRIV_KEY = process.env.REACT_APP_DEFAULT_PRIV_KEY;
 const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS;
+const DEFAULT_ADDRESS = process.env.REACT_APP_CONTRACT_OWNER_ADDRESS;
 
 function environment(env) {
     switch (env) {
@@ -11,7 +12,7 @@ function environment(env) {
           explorerUrl: "https://explorer.aelf.io/",
           defaultPrivateKey: DEFAULT_PRIV_KEY,
           contractName: "Aelf Academy",
-          // tokenContractName: 'AElf.ContractNames.Token',
+          defaultAddress: DEFAULT_ADDRESS,
           tokenContractName: 'AElf.ContractNames.Token',
           address: {
             prefix: 'ELF',
@@ -26,6 +27,7 @@ function environment(env) {
                 contractAddress: CONTRACT_ADDRESS,
                 explorerUrl: "https://explorer.aelf.io/",
                 defaultPrivateKey: DEFAULT_PRIV_KEY,
+                defaultAddress: DEFAULT_ADDRESS,
                 contractName: "Aelf Academy",
                 tokenContractName: 'AElf.ContractNames.Token',
                 address: {

@@ -64,6 +64,9 @@ nav>.nav>:last-child{
   text-decoration: none;
 }
 
+.empty-div{
+  height: 70vh;
+}
 .footer{
   height: 200px;
 }

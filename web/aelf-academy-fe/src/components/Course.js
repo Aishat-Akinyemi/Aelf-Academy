@@ -4,7 +4,7 @@ import {PerformACall} from '../utils/Aelf'
 import {useNavigate, Link} from 'react-router-dom';
 
 
-const Course = ({ course}) => {
+const Course = ({ course, user}) => {
     let navigate = useNavigate();
 
   return (
@@ -24,13 +24,19 @@ const Course = ({ course}) => {
                    {course.introduction}
                 </Card.Text>
                 <span className='position-absolute' style={{bottom: "-5px"}}>
-                    <Button variant="outline-primary" ><span className='p-3' onClick={() => {
-                    navigate(`/course/${course.courseId}`);
-                    }}
-                    >
-                    Start Now</span></Button>  
+                   {
+                        (user && user.role === 'Learner') &&
+                        (<Button variant="outline-primary" ><span className='p-3' onClick={() => {
+                        navigate(`/course/${course.courseId}`);
+                        }}
+                        >
+                        Start Now</span>
+                        </Button>)
+                    }  
                     
-                    <Link to={`/quest/${course.courseId}`} className='sm-txt p-5'>Evaluate submissions</Link></span>
+                    {(user && user.role ==='Admin') && <Link to={`/quest/${course.courseId}`} className='sm-txt p-5'>Evaluate submissions</Link>}
+                    {!user && 'Join Aelf Academy to Start Learning.'}
+                    </span>
             </Card.Body>
         </Card>
     </Col>

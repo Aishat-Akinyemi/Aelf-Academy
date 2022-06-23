@@ -42,8 +42,8 @@ const Faq = () => {
             faqs.length > 0?
             (
                 <Accordion className='mm'>
-                    {faqs.map((faq) =>(
-                        <Accordion.Item eventKey={faq.id} className='faq-item'>
+                    {faqs.map((faq, ind) =>(
+                        <Accordion.Item eventKey={faq.id} className='faq-item' key={ind}>
                             <Accordion.Header>{faq.question}</Accordion.Header>
                             <Accordion.Body>{faq.answer}</Accordion.Body>
                         </Accordion.Item>

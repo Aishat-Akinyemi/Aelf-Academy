@@ -3,18 +3,23 @@ import axios from "axios";
 
 export const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
-export async function uploadDataToIpfs(data) {
+export async function uploadDataToIpfs(inputData) {
+    const data =  JSON.stringify({
+        toc: inputData.toc,
+        introduction: inputData.introduction,
+        challengeDescription: inputData.challengeDescription,
+        content: inputData.content
+      });
     //uploads stringified data to ipfs
     try {
       // save to save data to IPFS
       const added = await client.add(data);
       // IPFS url for uploaded metadata
-      const url = `https://ipfs.io/ipfs/${added.path}`;
+      return `https://ipfs.io/ipfs/${added.path}`;
   
     } catch(error){
-        ipfs: 'https://ipfs.infura.io'
+        console.log(error);
     }
-    return url;
 }
 
 
