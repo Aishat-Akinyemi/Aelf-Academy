@@ -221,12 +221,111 @@ namespace AElf.Contracts.AelfAcademy
         }
 
         [Fact]
+        public async Task Submission()
+        {
+            // Get a stub for testing.
+            var keyPairOwner = SampleAccount.Accounts.First().KeyPair;
+            var ownerStub = GetAelfAcademyContractStub(keyPairOwner);
+
+            var keyPairL1 = SampleAccount.Accounts.Skip(3).First().KeyPair;
+            var learner1Address = SampleAccount.Accounts.Skip(3).First().Address;
+            var learner1Stub = GetAelfAcademyContractStub(keyPairL1);
+
+            var keyPairAdmin = SampleAccount.Accounts.Skip(1).First().KeyPair;
+            var adminStub = GetAelfAcademyContractStub(keyPairAdmin);
+
+            var keyPairLearner2 = SampleAccount.Accounts.Skip(4).First().KeyPair;
+            var learner2Address = SampleAccount.Accounts.Skip(4).First().Address;
+            var learner2stub = GetAelfAcademyContractStub(keyPairLearner2);
+
+            var admins = new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(1).First().Address };
+            var chief_moderator = new AddUserInput { Username = "anike", Address = SampleAccount.Accounts.Skip(2).First().Address };
+            //initialize
+            await ownerStub.Initialize.SendAsync(new InitializeInput { Admin = admins, ChiefModerator = chief_moderator });
+
+            //add learner account
+            StringValue username = new StringValue { Value = "tara" };
+            await learner1Stub.AddLearner.SendAsync(username);
+            //add 2nd learner account
+            StringValue username2 = new StringValue { Value = "fiona" };
+            await learner2stub.AddLearner.SendAsync(username2);
+
+            //fund 
+            const long amount = 1000_00000000;
+            var tokenStub = GetTokenContractStub(keyPairOwner);
+            await tokenStub.Approve.SendAsync(new ApproveInput
+            {
+                Spender = DAppContractAddress,
+                Symbol = "ELF",
+                Amount = long.MaxValue
+            });
+            await ownerStub.FundAcademy.SendAsync(new Int64Value { Value = amount });
+            var initialContractBalance = (await ownerStub.GetAcademyInfo.CallAsync(new Empty())).Balance;
+
+            //add courses with owner account
+            var course1 = new CourseInput
+            {
+                ContentUrl = "https://...",
+                Level = 1,
+                ModerationReward = 10_00000000,
+                SubmissionReward = 50_00000000,
+                CourseTitle = "Get started with aelf"
+            };
+            await ownerStub.AddCourse.SendAsync(course1);
+            //submitting a challenge with a non-existent courseId should fail
+            var submitLevel2ChallengeInput = new SubmitChallengeInput
+            {
+                CourseId = 2,
+                SubmissionUrl = "https://ipfs.io//1"
+            };
+            await learner1Stub.SubmitChallenge.SendWithExceptionAsync(submitLevel2ChallengeInput);
+
+            //submitting a challenge with a non-learner account should fail
+            await ownerStub.SubmitChallenge.SendWithExceptionAsync(submitLevel2ChallengeInput);
+
+
+            //successfully submitting a challenge should increase the count of submissions
+            var submitValidChallengeInput = new SubmitChallengeInput
+            {
+                CourseId = 1,
+                SubmissionUrl = "https://ipfs.io//1"
+            };
+            await learner1Stub.SubmitChallenge.SendAsync(submitValidChallengeInput);
+            var courseSubmission = await learner1Stub.GetCourseSubmission.CallAsync(new Int64Value { Value = 1 });
+            //total number of submissions for course should  be 1           
+            courseSubmission.UserSubmissions.Count.ShouldBe(1);
+            
+
+            //should accept additional submission if previous submissions have not yet been approved by moderator
+            var submitValidChallengeInput1 = new SubmitChallengeInput
+            {
+                CourseId = 1,
+                SubmissionUrl = "https://ipfs.io//2"
+            };
+            await learner1Stub.SubmitChallenge.SendAsync(submitValidChallengeInput1);            
+
+            await learner2stub.SubmitChallenge.SendAsync(submitValidChallengeInput1);
+            await learner2stub.SubmitChallenge.SendAsync(submitValidChallengeInput1);
+            //total number of submissions for course should  be 2
+            courseSubmission = await learner1Stub.GetCourseSubmission.CallAsync(new Int64Value { Value = 1 });
+            courseSubmission.UserSubmissions.Count.ShouldBe(2);
+
+            //learner1 submission count for course1 should be 2
+            var learnerSubmission = await learner1Stub.GetLearnerSubmission.CallAsync(learner1Address);
+           
+            //learner2 submission count for course1 should be 2
+            var learner2Submission = await learner1Stub.GetLearnerSubmission.CallAsync(learner2Address);
+          
+
+        }
+
+        [Fact]
         public async Task SubmissionAndModeration()
         {
             // Get a stub for testing.
             var keyPairOwner = SampleAccount.Accounts.First().KeyPair;
             var ownerStub = GetAelfAcademyContractStub(keyPairOwner);
-            
+
             var keyPairL1 = SampleAccount.Accounts.Skip(3).First().KeyPair;
             var learner1Address = SampleAccount.Accounts.Skip(3).First().Address;
             var learner1Stub = GetAelfAcademyContractStub(keyPairL1);
@@ -242,7 +341,7 @@ namespace AElf.Contracts.AelfAcademy
             var learner2Address = SampleAccount.Accounts.Skip(4).First().Address;
             var learner2stub = GetAelfAcademyContractStub(keyPairLearner2);
 
-            var admins = new  AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(1).First().Address };
+            var admins = new AddUserInput { Username = "aishat", Address = SampleAccount.Accounts.Skip(1).First().Address };
             var chief_moderator = new AddUserInput { Username = "anike", Address = SampleAccount.Accounts.Skip(2).First().Address };
             //initialize
             await ownerStub.Initialize.SendAsync(new InitializeInput { Admin = admins, ChiefModerator = chief_moderator });
@@ -268,7 +367,11 @@ namespace AElf.Contracts.AelfAcademy
             var initialContractBalance = (await ownerStub.GetAcademyInfo.CallAsync(new Empty())).Balance;
 
             var initialModeratorBalance = (await tokenStub.GetBalance.CallAsync(new GetBalanceInput { Symbol = "ELF", Owner = moderatorAdd })).Balance; ;
-            var initialLearnerBalance = (await tokenStub.GetBalance.CallAsync(new GetBalanceInput { Symbol = "ELF", Owner = learner2Address })).Balance; 
+            var initialLearnerBalance = (await tokenStub.GetBalance.CallAsync(new GetBalanceInput { Symbol = "ELF", Owner = learner2Address })).Balance;
+
+            var initialModeratorReward = (await ownerStub.GetUserInfo.CallAsync(moderatorAdd)).Reward;
+            var initialLearnerReward = (await ownerStub.GetUserInfo.CallAsync(learner2Address)).Reward;
+
             //add courses with owner account
             var course1 = new CourseInput
             {
@@ -335,21 +438,31 @@ namespace AElf.Contracts.AelfAcademy
                 CourseId = 3,
                 SubmissionUrl = "https://ipfs.io//4"
             };
+            
             await learner2stub.SubmitChallenge.SendAsync(submitValidChallengeInput3);
 
             //a non-moderator who is not 2 levels above the course cannot moderate
             await learner2stub.ModerateChallenge.SendWithExceptionAsync(new ModerateChallengeInput { CourseId = 1, LearnerId = learner1Address, IsApproved = true });
-            
+
             //a moderator can moderate
             await moderatorStub.ModerateChallenge.SendAsync(new ModerateChallengeInput { CourseId = 3, LearnerId = learner2Address, IsApproved = true });
-            
-            var moderatorBalanceAfterModeration = (await tokenStub.GetBalance.CallAsync(new GetBalanceInput {  Symbol = "ELF", Owner = moderatorAdd})).Balance;               
+
+            var moderatorBalanceAfterModeration = (await tokenStub.GetBalance.CallAsync(new GetBalanceInput { Symbol = "ELF", Owner = moderatorAdd })).Balance;
             var learnerBalanceAfterModeration = (await tokenStub.GetBalance.CallAsync(new GetBalanceInput { Symbol = "ELF", Owner = learner2Address })).Balance;
             var moderationPaidReward = moderatorBalanceAfterModeration - initialModeratorBalance;
             var learnerPaidReward = learnerBalanceAfterModeration - initialLearnerBalance;
-            var contractBalanceAfterModeration = (await ownerStub.GetAcademyInfo.CallAsync(new Empty())).Balance;           
-            (initialContractBalance - contractBalanceAfterModeration).ShouldBe(learnerPaidReward+moderationPaidReward);        
+            var contractBalanceAfterModeration = (await ownerStub.GetAcademyInfo.CallAsync(new Empty())).Balance;
+            (initialContractBalance - contractBalanceAfterModeration).ShouldBe(learnerPaidReward + moderationPaidReward);
 
+            //get learner's and moderator's reward AFTER submission
+            var subsequentModeratorReward = (await ownerStub.GetUserInfo.CallAsync(moderatorAdd)).Reward;
+            var subsequentLearnerReward = (await ownerStub.GetUserInfo.CallAsync(learner2Address)).Reward;
+            (subsequentLearnerReward - initialLearnerReward).ShouldBe(course3.SubmissionReward);
+            (subsequentModeratorReward - initialModeratorReward).ShouldBe(course3.ModerationReward);
+
+
+            //a moderator cannot approve an already moderated submission
+            await moderatorStub.ModerateChallenge.SendWithExceptionAsync(new ModerateChallengeInput { CourseId = 3, LearnerId = learner2Address, IsApproved = true });
 
             //should not accept a submission for a course if it has already been approved by moderator
             await learner2stub.SubmitChallenge.SendWithExceptionAsync(submitValidChallengeInput3);

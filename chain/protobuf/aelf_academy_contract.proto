@@ -16,8 +16,8 @@ service AelfAcademyContract {
     rpc AddChiefModerator (AddUserInput) returns (google.protobuf.Empty) { }
     rpc AddLearner (google.protobuf.StringValue) returns (google.protobuf.Empty) { }
     rpc SubmitChallenge (SubmitChallengeInput) returns (google.protobuf.Empty) { }
-    rpc ModerateChallenge (ModerateChallengeInput) returns (google.protobuf.Empty) { }
-    rpc FundAcademy (google.protobuf.Int64Value) returns (google.protobuf.Empty) { }
+    rpc ModerateChallenge (ModerateChallengeInput) returns (google.protobuf.Empty) {}
+    rpc FundAcademy (google.protobuf.Int64Value) returns (google.protobuf.Empty) {}
     //View
     rpc GetAcademyInfo (google.protobuf.Empty) returns (AcademyInfo) {
         option (aelf.is_view) = true;
